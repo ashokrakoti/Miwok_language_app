@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         phrasesTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(),"Opens the list of Numbers", Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(),"Opens the list of Phrases", Toast.LENGTH_SHORT).show();
 
                 Intent phrasesIntent = new Intent(view.getContext(),PhrasesActivity.class);
                 startActivity(phrasesIntent);

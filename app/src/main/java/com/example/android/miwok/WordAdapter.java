@@ -59,9 +59,9 @@ public class WordAdapter extends ArrayAdapter<Word> {
         // Set the background color of the text container View
         textContainer.setBackgroundColor(color);
 
-        ImageView playButton = listItem.findViewById(R.id.play);
-        //playButton.setImageResource(R.drawable.play_button);
-        playButton.setBackgroundColor(color);
+        /*ImageView playButton = listItem.findViewById(R.id.play);
+        playButton.setImageResource(R.drawable.sharp_play_arrow_white_24dp);
+        playButton.setBackgroundColor(color);*/
 
         return listItem;
 
