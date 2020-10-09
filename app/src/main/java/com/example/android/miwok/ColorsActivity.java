@@ -1,5 +1,7 @@
 package com.example.android.miwok;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -7,26 +9,39 @@ import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class ColorsActivity extends AppCompatActivity {
+
     //media player object reference needs to be global for accessing it inside the anonymous class definition
     // provided for the setOnItemClickListeners.
     private MediaPlayer mp ;
+
+    //handles the media playing audio focus.
     private AudioManager am;
-    private AudioFocusRequest audioFocusRequest = null;
-    private AudioAttributes audioAttributes = null;
+
+    //these are two new attributes created for building the audio focus request object.
+    AudioFocusRequest audioFocusRequest = null;
+    AudioAttributes audioAttributes = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //setting up the up button action using the default app bar. We are not using a toolbar here.
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!= null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        //initialising the audio manager
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
 
@@ -64,26 +79,24 @@ public class ColorsActivity extends AppCompatActivity {
                 mp = MediaPlayer.create(getApplicationContext(), word.getAudioResourceId());
                 Log.i("ColorsActivity.class", "created media player");
 
-                ////////////////////  building audio attributes to use in building a AudioFocusRequest object.
+                //building audio focus attributes for requesting audio manager.
+                //needed only for api levels more than 21 - lollipop.
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {  //21
-                    audioAttributes = new AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                            .build();
+
+                    //building audio focus attributes. needed to build audioFocusRequest.
+                    buildAudioFocusAttributes();
                 }
 
-                ///// building a AudioFocusRequest object to use for requesting audio focus.
+                // building a AudioFocusRequest object to use for requesting audio focus.
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {  //26
-                    audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                            .setOnAudioFocusChangeListener(audioFocusChangeListener)
-                            .setAudioAttributes(audioAttributes)
-                            .setAcceptsDelayedFocusGain(false)
-                            .setWillPauseWhenDucked(true)
-                            .build();
+
+                    //building audio focus request for apis more than or equal to oreo.
+                    buildAudioFocusRequest();
 
                     //requesting  the audio focus for playing the file.
                     result = am.requestAudioFocus(audioFocusRequest);
                 }else {
+
                     //requesting for audio focus in older versions below oreo.
                     result = am.requestAudioFocus(audioFocusChangeListener,
                             AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
@@ -96,23 +109,17 @@ public class ColorsActivity extends AppCompatActivity {
                     } else {
                         mp.start();
                     }
+                    mp.setOnCompletionListener(onCompletionListener);
                 }
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        if(!mp.isPlaying()){
-                            releaseMediaPlayer(mp);
-                        }
-                    }
-                });
             }
         });
-    }
+    }//end of onCreate method.
 
     @Override
     protected void onStop() {
         super.onStop();
         releaseMediaPlayer(mp);
+        Toast.makeText(getApplicationContext(), "music player killed", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -164,4 +171,39 @@ public class ColorsActivity extends AppCompatActivity {
             }
         }
     };//end of OnAudioFocusChangeListener
+
+    /**
+     * This listener gets triggered when the {@link MediaPlayer} has completed
+     * playing the audio file.
+     */
+    private MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            if(!mp.isPlaying()){
+                mp.reset();
+                releaseMediaPlayer(mp);
+            }
+        }
+    };
+
+    ////building audio focus attributes
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void buildAudioFocusAttributes(){
+        //  building audio attributes to use in building a AudioFocusRequest object.
+        audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build();
+    }
+
+    //building audio focus request object.
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void buildAudioFocusRequest(){
+        audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setOnAudioFocusChangeListener(audioFocusChangeListener)
+                .setAudioAttributes(audioAttributes)
+                .setAcceptsDelayedFocusGain(false)
+                .setWillPauseWhenDucked(true)
+                .build();
+    }
 }
