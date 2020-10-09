@@ -44,16 +44,8 @@ public class ColorsActivity extends AppCompatActivity {
         //initialising the audio manager
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-
-        final ArrayList<Word> words = new ArrayList<Word>();
-        words.add(new Word("red","weṭeṭṭi", R.drawable.color_red, R.raw.color_red));
-        words.add(new Word("green","chokokki", R.drawable.color_green, R.raw.color_green));
-        words.add(new Word("brown","ṭakaakki", R.drawable.color_brown, R.raw.color_brown));
-        words.add(new Word("gray","ṭopoppi", R.drawable.color_gray, R.raw.color_gray));
-        words.add(new Word("black","kululli", R.drawable.color_black, R.raw.color_black));
-        words.add(new Word("white","kelelli", R.drawable.color_white, R.raw.color_white));
-        words.add(new Word("dusty yellow","ṭopiisә", R.drawable.color_dusty_yellow, R.raw.color_dusty_yellow));
-        words.add(new Word("mustard yellow","chiwiiṭә", R.drawable.color_mustard_yellow, R.raw.color_mustard_yellow));
+        //creating the words list
+        final ArrayList<Word> words = createWordsList();
 
         //creating an adapter for holding the data of the list view of the items containing the numbers.
         //we have created a custom list item layout and used it to tell the array adapter to load data from the source accordingly.
@@ -205,5 +197,22 @@ public class ColorsActivity extends AppCompatActivity {
                 .setAcceptsDelayedFocusGain(false)
                 .setWillPauseWhenDucked(true)
                 .build();
+    }
+
+
+    /* creating the array list of Word objects for displaying in  list view.
+     */
+    private ArrayList<Word> createWordsList(){
+        final ArrayList<Word> words = new ArrayList<Word>();
+        words.add(new Word("red","weṭeṭṭi", R.drawable.color_red, R.raw.color_red));
+        words.add(new Word("green","chokokki", R.drawable.color_green, R.raw.color_green));
+        words.add(new Word("brown","ṭakaakki", R.drawable.color_brown, R.raw.color_brown));
+        words.add(new Word("gray","ṭopoppi", R.drawable.color_gray, R.raw.color_gray));
+        words.add(new Word("black","kululli", R.drawable.color_black, R.raw.color_black));
+        words.add(new Word("white","kelelli", R.drawable.color_white, R.raw.color_white));
+        words.add(new Word("dusty yellow","ṭopiisә", R.drawable.color_dusty_yellow, R.raw.color_dusty_yellow));
+        words.add(new Word("mustard yellow","chiwiiṭә", R.drawable.color_mustard_yellow, R.raw.color_mustard_yellow));
+
+        return words;
     }
 }
