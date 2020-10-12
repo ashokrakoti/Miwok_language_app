@@ -18,77 +18,36 @@ package com.example.android.miwok;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         // Set the content of the activity to use the activity_main.xml layout file
-        setContentView(R.layout.activity_main);
-       // finding reference to the numbers text view
-        TextView numbersTextView = findViewById(R.id.numbers);
+        ViewPager viewPager =  findViewById(R.id.viewpager);
 
-        //onClickListener() method Call
-        numbersTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(),"Opens the list of Numbers", Toast.LENGTH_SHORT).show();
+        // Create an adapter that knows which fragment should be shown on each page
+        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(),getBaseContext());
 
-               Intent numbersIntent = new Intent(view.getContext(),NumbersActivity.class);
-               startActivity(numbersIntent);
-            }
-        });
-        //onClickListener()  method Call ending.
+        // Set the adapter onto the view pager
+        viewPager.setAdapter(adapter);
 
-        // finding reference to the  colors text view
-        TextView colorsTextView = findViewById(R.id.colors);
+        //passing the view pager to the TabLayout
+        TabLayout tabLayout = findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
-        //onClickListener() method Call
-        colorsTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(),"Opens the list of colors", Toast.LENGTH_SHORT).show();
-
-                Intent colorsIntent = new Intent(view.getContext(),ColorsActivity.class);
-                startActivity(colorsIntent);
-            }
-        });
-        //onClickListener()  method Call ending.
-
-        // finding reference to the numbers text view
-        TextView familyTextView = findViewById(R.id.family);
-
-        //onClickListener() method Call
-        familyTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(),"Opens the list of family relations", Toast.LENGTH_SHORT).show();
-
-                Intent familyIntent = new Intent(view.getContext(),FamilyActivity.class);
-                startActivity(familyIntent);
-            }
-        });
-        //onClickListener()  method Call ending.
-
-        // finding reference to the numbers text view
-        TextView phrasesTextView = findViewById(R.id.phrases);
-
-        //onClickListener() method Call
-        phrasesTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(),"Opens the list of Phrases", Toast.LENGTH_SHORT).show();
-
-                Intent phrasesIntent = new Intent(view.getContext(),PhrasesActivity.class);
-                startActivity(phrasesIntent);
-            }
-        });
-        //onClickListener()  method Call ending.
     }
+
 }
